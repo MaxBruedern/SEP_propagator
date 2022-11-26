@@ -231,6 +231,7 @@ Delta_t = MIN(abs(CFL_coeff*Delta_z/speed),abs(CFL_coeff*Delta_mu/B_max),abs(CFL
    DO i = 1, N
 
 ! Conservation of diffusive flux as boundary condition
+  ! CHECK "produces" particles?
   f(i,1) = f0(i,1) - Delta_t/Delta_mu*(-(D_mumu(i,1)+D_mumu(i,2))/2.*(f0(i,2) - f0(i,1))/Delta_mu)
   f(i,M) = f0(i,M) + Delta_t/Delta_mu*(-(D_mumu(i,M)+D_mumu(i,M-1))/2.*(f0(i,M) - f0(i,M-1))/Delta_mu)
   
@@ -297,7 +298,7 @@ Delta_t = MIN(abs(CFL_coeff*Delta_z/speed),abs(CFL_coeff*Delta_mu/B_max),abs(CFL
 	f00(i,j) = A(j)*f(i,j) + limiter !apply the limiter, i.e. correct the flux !NOTE: here f00 is a flux, while f and f0 are intensities
 	        
      END DO
-    
+     ! CHECK f00 for i=1 and i = N missing boundary treatment
      DO i = 2, N - 1
             
 	f(i,j) = f0(i,j) - Delta_t/Delta_z*(f00(i,j) - f00(i-1,j)) !Do a full time step usin the upwind scheme and the flux corrected values
@@ -349,7 +350,7 @@ Delta_t = MIN(abs(CFL_coeff*Delta_z/speed),abs(CFL_coeff*Delta_mu/B_max),abs(CFL
 	f00(i,j) = A(j)*f(i,j) + limiter !apply the limiter
 	        
      END DO
-    
+     ! CHECK f00 i=1 and 1=N are applied but missing boundary treatment 
      DO i = 2, N - 1
             
 	f(i,j) = f0(i,j) - Delta_t/Delta_z*(f00(i+1,j) - f00(i,j)) !Do the full time step
@@ -650,7 +651,7 @@ SUBROUTINE DEF_COEFFICIENTS(speed,N,L,Z,M,MU,B,D_mumu,D_mumu_dmu,A,z_index,energ
    END DO
     
      D_mumu_dmu(i,1) = (D_mumu(i,1) - D_mumu(i,2))/ABS(MU(2) - MU(1))
-     D_mumu_dmu(i,M-1) = (D_mumu(i,M) - D_mumu(i,j-1))/ABS(MU(2) - MU(1))
+     D_mumu_dmu(i,M) = (D_mumu(i,M) - D_mumu(i,M-1))/ABS(MU(2) - MU(1))
  
   
  END DO
